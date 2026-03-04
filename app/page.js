@@ -1,30 +1,23 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function Home() {
-  const [score, setScore] = useState(0);
+  const [email, setEmail] = useState("");
 
-  const fetchScore = async () => {
-    const res = await fetch("/api/score");
-    const data = await res.json();
-    setScore(data.score);
+  const login = async () => {
+    await supabase.auth.signInWithOtp({ email });
+    alert("メール確認！");
   };
-
-  const addScore = async () => {
-    const res = await fetch("/api/score", { method: "POST" });
-    const data = await res.json();
-    setScore(data.score);
-  };
-
-  useEffect(() => {
-    fetchScore();
-  }, []);
 
   return (
-    <div style={{ padding: 20 }}>
+    <div>
       <h1>Mini Rogue</h1>
-      <p>Score: {score}</p>
-      <button onClick={addScore}>+1</button>
+      <input
+        type="email"
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <button onClick={login}>ログイン</button>
     </div>
   );
 }
