@@ -1,21 +1,30 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [playerHP, setPlayerHP] = useState(30);
-  const [enemyHP, setEnemyHP] = useState(20);
+  const [score, setScore] = useState(0);
 
-  const attack = () => {
-    const damage = Math.floor(Math.random() * 6) + 1;
-    setEnemyHP(enemyHP - damage);
+  const fetchScore = async () => {
+    const res = await fetch("/api/score");
+    const data = await res.json();
+    setScore(data.score);
   };
+
+  const addScore = async () => {
+    const res = await fetch("/api/score", { method: "POST" });
+    const data = await res.json();
+    setScore(data.score);
+  };
+
+  useEffect(() => {
+    fetchScore();
+  }, []);
 
   return (
     <div style={{ padding: 20 }}>
       <h1>Mini Rogue</h1>
-      <p>Player HP: {playerHP}</p>
-      <p>Enemy HP: {enemyHP}</p>
-      <button onClick={attack}>Attack</button>
+      <p>Score: {score}</p>
+      <button onClick={addScore}>+1</button>
     </div>
   );
 }
